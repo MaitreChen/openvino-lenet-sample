@@ -9,13 +9,11 @@
 - OpenVINO 2022.1 Runtime
 - OpenVINO 2022.1 Dev
 
----
-
 PyTorch安装教程详见：[Windows下深度学习环境搭建（PyTorch）](https://zhuanlan.zhihu.com/p/538386791)
 
 OpenVINO 2022 Runtime安装详见文章**第三部分**：[VS+OpenCV+OpenVINO2022详细配置](https://zhuanlan.zhihu.com/p/603685184)
 
-OpenVINO 2022 Dev安装详见文章第3部分：[OpenVINO2022 运行分类Sample](https://zhuanlan.zhihu.com/p/603740365)
+OpenVINO 2022 Dev安装详见文章**第3部分**：[OpenVINO2022 运行分类Sample](https://zhuanlan.zhihu.com/p/603740365)
 
 ---
 
@@ -61,4 +59,4 @@ python inference_openvino.py -m model/best.xml -i img.jpg -d CPU
 
 ---
 
-详见：基于OpenVINO2022 C++ API 的模型部署 - 阿斌有话说的文章 - 知乎 https://zhuanlan.zhihu.com/p/604351639
+详见：[基于OpenVINO2022 C++ API 的模型部署](https://zhuanlan.zhihu.com/p/604351639)
