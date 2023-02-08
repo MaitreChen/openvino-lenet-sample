@@ -1,0 +1,11 @@
+*.onnx
+*.ckpt
+
+*.xml
+*.bin
+*.mapping
+
+__pycache__/
+
+.idea/
+/src/datasets/MNIST
