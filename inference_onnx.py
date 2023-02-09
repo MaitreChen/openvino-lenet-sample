@@ -17,6 +17,7 @@ def get_test_transform():
 
 def inference_mnist(model_path, img_path):
     session = onnxruntime.InferenceSession(model_path)
+    # session.set_providers(['CPUExecutionProvider'])
     src = cv.imread(img_path, 0)
     w, h = 32, 32
     resized_img = cv.resize(src, (w, h))
