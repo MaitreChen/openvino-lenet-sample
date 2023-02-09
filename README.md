@@ -13,7 +13,7 @@ PyTorch安装教程详见：[Windows下深度学习环境搭建（PyTorch）](ht
 
 OpenVINO 2022 Runtime安装详见文章**第三部分**：[VS+OpenCV+OpenVINO2022详细配置](https://zhuanlan.zhihu.com/p/603685184)
 
-OpenVINO 2022 Dev安装详见文章**第3部分**：[OpenVINO2022 运行分类Sample](https://zhuanlan.zhihu.com/p/603740365)
+OpenVINO 2022 Dev安装详见文章**第三部分**：[OpenVINO2022 运行分类Sample](https://zhuanlan.zhihu.com/p/603740365)
 
 ---
 
@@ -23,6 +23,12 @@ OpenVINO 2022 Dev安装详见文章**第3部分**：[OpenVINO2022 运行分类Sa
 
 ```python
 python train.py
+```
+
+### PyTorch推理
+
+```python
+python inference_torch.py -m model/best.ckpt -i img.jpg -d cpu
 ```
 
 ### 模型导出
@@ -46,8 +52,10 @@ mo --input_model model/best.onnx --output_dir model
 ### OpenVINO Python推理
 
 ```python
-python inference_openvino.py -m model/best.xml -i img.jpg -d CPU
+python inference_openvino.py --model model/best.xml --img img.jpg --mode sync --device CPU
 ```
+
+推理模型可指定同步推理或异步推理：[sync、async]
 
 推理设备可指定：[CPUGPU, MYRIAD]
 
