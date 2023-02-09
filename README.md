@@ -1,5 +1,3 @@
-# openvino-lenet-sample
-
 ## Dependence
 
 - Win 10
@@ -55,9 +53,9 @@ mo --input_model model/best.onnx --output_dir model
 python inference_openvino.py --model model/best.xml --img img.jpg --mode sync --device CPU
 ```
 
-推理模型可指定同步推理或异步推理：[sync、async]
+OpenVINO模型推理时，可指定同步推理或异步推理：[sync、async]
 
-推理设备可指定：[CPUGPU, MYRIAD]
+推理设备可指定：[CPU，GPU，MYRIAD]
 
 其中，MYRIAD是NSC2的视觉处理器，需要连接NSC2才可成功执行！
 
