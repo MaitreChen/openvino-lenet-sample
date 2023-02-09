@@ -6,7 +6,7 @@ import numpy as np
 import cv2 as cv
 
 
-def inference_mnist(model_path, img_path, device):
+def inference_mnist(model_path, img_path, mode, device):
     print(f"Inference device: {device}")
     # Step 1. Create OpenVINORuntime Core
     core = ov.Core()
@@ -32,9 +32,15 @@ def inference_mnist(model_path, img_path, device):
     infer_request.set_input_tensor(input_tensor)
 
     # 5. Start Synchronous Inference
-    start_time = time()
-    infer_request.infer()
-    end_time = time()
+    if mode == 'sync':
+        start_time = time()
+        infer_request.infer()
+        end_time = time()
+    else:
+        start_time = time()
+        infer_request.start_async()
+        infer_request.wait()
+        end_time = time()
     print(f"Inference time: {end_time - start_time:.6f} ms")
 
     # 6. Get output and process
@@ -53,13 +59,15 @@ def inference_mnist(model_path, img_path, device):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', type=str, required=True)
-    parser.add_argument('-i', '--img', type=str, required=True)
-    parser.add_argument('-d', '--device', type=str, required=True, help="[CPU,GPU,MYRAID]")
+    parser.add_argument('--model', type=str, required=True)
+    parser.add_argument('--img', type=str, required=True)
+    parser.add_argument('--mode', default='sync', type=str, required=False)
+    parser.add_argument('--device', type=str, required=True, help="[CPU,GPU,MYRAID]")
     args = parser.parse_args()
 
     model_path = args.model
     img_path = args.img
+    mode = args.mode
     device = args.device
 
-    inference_mnist(model_path, img_path, device)
+    inference_mnist(model_path, img_path, mode, device)
