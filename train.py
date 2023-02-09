@@ -9,6 +9,7 @@ from src.net import Net
 from utils.dataset import get_dataset_loader
 
 import argparse
+import os
 
 
 # train
@@ -62,6 +63,7 @@ def trainer(net, batch_size, num_epoch, device, learning_rate, optim='sgd'):
         test_acc_set.append(test_acc)
         if test_acc > best_acc:
             best_acc = test_acc
+
             torch.save(net.state_dict(), 'model/best.ckpt')
 
     print('Finished Training\n')
@@ -104,9 +106,12 @@ def plot_loss_acc():
 
 
 if __name__ == "__main__":
+    if not os.path.isdir('model/'):
+        os.makedirs('model/')
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch', default=64, type=int, required=False)
-    parser.add_argument('--epoch', default=30, type=int, required=False)
+    parser.add_argument('--epoch', default=20, type=int, required=False)
     parser.add_argument('--lr', default=0.01, type=float, required=False)
     args = parser.parse_args()
 
