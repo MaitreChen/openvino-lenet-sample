@@ -1,3 +1,10 @@
+<div align="center">
+   <a href="https://img.shields.io/badge/Nickname-阿斌~-blue"><img src="https://img.shields.io/badge/Nickname-阿斌~-blue.svg"></a>
+   <a href="https://img.shields.io/badge/Hello-Buddy~-red"><img src="https://img.shields.io/badge/Hello-Buddy~-red.svg"></a>
+   <a href="https://img.shields.io/badge/Enjoy-Yourself-brightgreen"><img src="https://img.shields.io/badge/Enjoy-Yourself-brightgreen.svg"></a>
+   
+  </div>
+
 # Introduction
 
 该仓库包含了深度学习应用的基本开发流程，包括模型训练、模型部署，旨在帮助小伙伴建立系统的认知！
@@ -67,11 +74,11 @@ OpenVINO模型推理时，可指定同步推理或异步推理：[sync、async]
 
 ### OpenVINO C++ 推理
 
-源码见openvino_cpp_code文件夹。
+源码见openvino_cpp_code文件夹。注意：
 
-文件夹中的matU8ToBlob.cpp为OpenVINO 2021提供的源文件，在OpenVINO 2022已移除。其主要作用在于将OpenCV读取到的**mat**数据对象转换为OpenVINO推理需要的**Blob**对象，同时也是为了将**NHWC**格式转换为**NCHW**！
+- 文件夹中的matU8ToBlob.cpp为OpenVINO 2021提供的源文件，在OpenVINO 2022已移除。其主要作用在于将OpenCV读取到的**mat**数据对象转换为OpenVINO推理需要的**Blob**对象，同时也是为了将**NHWC**格式转换为**NCHW**！
 
-在OpenVINO 2022中，可以参考matU8ToBlob的实现方式将图片数据复制到Tensor中。
+- 在OpenVINO 2022中，可以参考matU8ToBlob的实现方式将图片数据复制到Tensor中。
 
 ---
 
