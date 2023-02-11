@@ -1,4 +1,12 @@
-## Dependence
+# Introduction
+
+该仓库包含了深度学习应用的基本开发流程，包括模型训练、模型部署，旨在帮助小伙伴建立系统的认知！
+
+在模型部署阶段，主要使用OpenVINO Inference API开发推理程序。
+
+接下来的工作为继续完善POT工具的使用，进一步优化模型，使其以更少的存储资源与推理时延部署在边缘端。
+
+# Dependence
 
 - Win 10
 - Python 3.8
@@ -13,43 +21,41 @@ OpenVINO 2022 Runtime安装详见文章**第三部分**：[VS+OpenCV+OpenVINO202
 
 OpenVINO 2022 Dev安装详见文章**第三部分**：[OpenVINO2022 运行分类Sample](https://zhuanlan.zhihu.com/p/603740365)
 
----
-
-## Quick Start
+# Quick Start
 
 ### 模型训练
 
-```python
+```bash
 python train.py
 ```
 
-### PyTorch推理
+### PyTorch 模型推理
 
-```python
+```bash
 python inference_torch.py -m model/best.ckpt -i img.jpg -d cpu
 ```
 
 ### 模型导出
 
-```python
+```bash
 python export_onnx.py -m model/best.ckpt
 ```
 
 ### ONNX推理
 
-```python
+```bash
 python inference_onnx.py -m model/best.onnx -i img.jpg
 ```
 
 ### 模型优化
 
-```python
+```bash
 mo --input_model model/best.onnx --output_dir model
 ```
 
-### OpenVINO Python推理
+### OpenVINO Python 推理
 
-```python
+```bash
 python inference_openvino.py --model model/best.xml --img img.jpg --mode sync --device CPU
 ```
 
@@ -61,7 +67,11 @@ OpenVINO模型推理时，可指定同步推理或异步推理：[sync、async]
 
 ### OpenVINO C++ 推理
 
-源码见openvino_cpp_code。
+源码见openvino_cpp_code文件夹。
+
+文件夹中的matU8ToBlob.cpp为OpenVINO 2021提供的源文件，在OpenVINO 2022已移除。其主要作用在于将OpenCV读取到的**mat**数据对象转换为OpenVINO推理需要的**Blob**对象，同时也是为了将**NHWC**格式转换为**NCHW**！
+
+在OpenVINO 2022中，可以参考matU8ToBlob的实现方式将图片数据复制到Tensor中。
 
 ---
 
