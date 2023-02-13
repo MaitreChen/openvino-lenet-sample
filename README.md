@@ -3,9 +3,10 @@
    <a href="https://img.shields.io/badge/Hello-Buddy~-red"><img src="https://img.shields.io/badge/Hello-Buddy~-red.svg"></a>
    <a href="https://img.shields.io/badge/Enjoy-Yourself-brightgreen"><img src="https://img.shields.io/badge/Enjoy-Yourself-brightgreen.svg"></a>
     </div>
+    <div align="center">
      [简体中文](README.md) | [English](README.EN.md)
 
-
+    </div>
 # Introduction
 
 该仓库包含了深度学习应用的基本开发流程，包括模型训练、模型部署，旨在帮助小伙伴建立系统的认知！
