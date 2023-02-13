@@ -19,8 +19,8 @@
 - Python 3.8
 - PyTorch 1.10.0
 - Visual Studio 2019
-- OpenVINO 2022.1 Runtime
-- OpenVINO 2022.1 Dev
+- OpenVINO 2022.3 Runtime
+- OpenVINO 2022.3 Dev
 
 PyTorch安装教程详见：[Windows下深度学习环境搭建（PyTorch）](https://zhuanlan.zhihu.com/p/538386791)
 
