@@ -1,24 +1,24 @@
 # IMPORT PACKAGES
-from matplotlib.pyplot import MultipleLocator
 import matplotlib.pyplot as plt
-import torch
-import torch.nn as nn
 from tqdm import tqdm
-
-from src.net import Net
-from utils.dataset import get_dataset_loader
-
 import argparse
 import os
 
+import torch
+import torch.nn as nn
 
-# train
-def trainer(net, batch_size, num_epoch, device, learning_rate, optim='sgd'):
-    # 训练设备
+from utils.dataset import get_dataset_loader
+from src.net import LeNet
+
+
+def trainer(net, batch_size, num_epoch, learning_rate, optim='sgd'):
+    device = 'cuda' if args.use_gpu else 'cpu'
     net.to(device)
     print(f"Training on device: {device}")
 
-    # 优化器
+    # define loss function
+    criterion = nn.CrossEntropyLoss()
+
     if optim == "sgd":
         optimizer = torch.optim.SGD(net.parameters(), lr=learning_rate, momentum=0.9)
     elif optim == "adam":
@@ -28,9 +28,9 @@ def trainer(net, batch_size, num_epoch, device, learning_rate, optim='sgd'):
     test_acc_set = []
     train_loss_set = []
 
-    # 训练
     test_acc = 0.0
     best_acc = 0.0
+
     for epoch in range(num_epoch):
         total_loss = 0.0
         train_acc = 0.0
@@ -44,6 +44,7 @@ def trainer(net, batch_size, num_epoch, device, learning_rate, optim='sgd'):
 
             optimizer.zero_grad()
             loss.backward()
+
             total_loss += loss.item()
             optimizer.step()
 
@@ -58,17 +59,18 @@ def trainer(net, batch_size, num_epoch, device, learning_rate, optim='sgd'):
         train_acc_set.append(train_acc / len(train_loader))
         train_loss_set.append(loss.item())
 
-        # 测试
+        # test
         test_acc = test(net, test_loader, device)
         test_acc_set.append(test_acc)
         if test_acc > best_acc:
             best_acc = test_acc
 
-            torch.save(net.state_dict(), 'model/best.ckpt')
+            save_path = 'model_data/best.ckpt'
+            torch.save(net.state_dict(), save_path)
+            print(f"The best accuracy is: {100. * best_acc:.2f} %")
 
+    print(f"save best model to model_data!")
     print('Finished Training\n')
-    print('Save best model to model file!')
-    print(f"The best accuracy is: {100. * best_acc:.2f} %")
 
     return train_acc_set, train_loss_set, test_acc_set
 
@@ -96,37 +98,42 @@ def plot_loss_acc():
     plt.plot(epoch_set, train_acc_set, lw=1.5, c='r', label='train-acc')
     plt.plot(epoch_set, train_loss_set, lw=1.5, c='g', label='train-loss')
     plt.plot(epoch_set, test_acc_set, lw=1.5, c='b', label='test-acc')
-    x_major_locator = MultipleLocator(1)
-    ax = plt.gca()
-    ax.xaxis.set_major_locator(x_major_locator)
-    plt.xlim((1, len(train_acc_set)))
     plt.xlabel("Epoch")
     plt.legend()
     plt.show()
 
 
-if __name__ == "__main__":
-    if not os.path.isdir('model/'):
-        os.makedirs('model/')
-
+def get_argparse():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batch', default=64, type=int, required=False)
-    parser.add_argument('--epoch', default=20, type=int, required=False)
-    parser.add_argument('--lr', default=0.01, type=float, required=False)
-    args = parser.parse_args()
 
-    batch_size = args.batch
-    epochs = args.epoch
-    learning_rate = args.lr
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    criterion = nn.CrossEntropyLoss()
+    parser.add_argument('--batch-size', default=64, type=int, help='batch size for training')
+    parser.add_argument('--epoch', default=4, type=int, help='number of epochs for training')
+    parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+    parser.add_argument('--use-gpu', action='store_true', default=True, help='turn on flag to use GPU')
+    parser.add_argument('--prune', action='store_true', default=False, help='turn on flag to prune')
 
-    # Initialize network
-    net = Net()
+    return parser
+
+
+if __name__ == "__main__":
+    # Create dir for saving model
+    if not os.path.isdir('model_data/'):
+        os.makedirs('model_data/')
+
+    # Get arguments
+    args = get_argparse().parse_args()
+
+    # Build model
+    net = LeNet()
 
     # Load dataset
-    train_loader, test_loader = get_dataset_loader(batch_size=batch_size)
+    train_loader, test_loader = get_dataset_loader(batch_size=args.batch_size)
 
-    train_acc_set, train_loss_set, test_acc_set = trainer(net, batch_size, epochs, device, learning_rate)
+    # Start training
+    train_acc_set, train_loss_set, test_acc_set = trainer(net, args.batch_size, args.epoch, args.lr)
 
+    # prune and retrain to restore accuracy
+    # if args.prune:
+
+    # Plot result
     plot_loss_acc()
