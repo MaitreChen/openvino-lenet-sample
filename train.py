@@ -74,10 +74,10 @@ def trainer(net, batch_size, num_epoch, learning_rate, optim, mode):
             best_acc = test_acc
             torch.save(net.state_dict(), save_path)
 
-            print("-"*10)
+            print("-" * 10)
             print(f"The best accuracy is: {100. * best_acc:.2f} %")
             print(f"save best model to {save_path}\n")
-            print("-"*10)
+            print("-" * 10)
 
     print(f'Finished {mode}ing!')
 
@@ -124,7 +124,7 @@ def get_argparse():
     parser.add_argument('--use-gpu', action='store_true', default=True, help='turn on flag to use GPU')
 
     # prune options
-    parser.add_argument('--prune', action='store_true', default=True, help='turn on flag to prune')
+    parser.add_argument('--prune', action='store_true', default=False, help='turn on flag to prune')
     parser.add_argument('--output-dir', type=str, default='model_data', help='checkpoints of pruned model')
     parser.add_argument('--ratio', type=float, default=0.5, help='pruning scale. (default: 0.5)')
     parser.add_argument('--retrain-mode', type=int, default=1, help='[train from scratch:0 | fine-tune:1]')
@@ -148,7 +148,6 @@ if __name__ == "__main__":
     # Load dataset
     train_loader, test_loader = get_dataset_loader(batch_size=args.batch_size)
 
-    '''
     # Build model
     net = LeNet()
 
@@ -158,7 +157,6 @@ if __name__ == "__main__":
     # plot
     if args.visualize:
         plot_loss_acc('train')
-    '''
 
     # prune and retrain to restore accuracy
     if args.prune:
