@@ -10,14 +10,16 @@ def get_dataset_loader(batch_size):
         [
             transforms.ToTensor(),
             transforms.Normalize(mean=(0.1307,), std=(0.3081,)),
-            transforms.Resize((32, 32))
+            # transforms.Resize((32, 32)),
+            # transforms.RandomRotation((0, 180))
+            # transforms.RandomRotation((-20, 20))
         ])
 
     test_pipeline = transforms.Compose(
         [
             transforms.ToTensor(),
             transforms.Normalize(mean=(0.1325,), std=(0.3105,)),
-            transforms.Resize((32, 32))
+            # transforms.Resize((32, 32))
         ])
 
     train_set = torchvision.datasets.MNIST(root='./src/datasets', train=True, download=True, transform=train_pipeline)

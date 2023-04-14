@@ -7,7 +7,7 @@ import os
 import torch
 import torch.nn as nn
 
-from utils.dataset import get_dataset_loader
+from utils.dataloader import get_dataset_loader
 from src.net import LeNet
 
 
