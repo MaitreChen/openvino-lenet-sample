@@ -32,7 +32,7 @@ def inference_mnist(model_path, img_path, device):
     start_time = time()
     outs = net(img)
     end_time = time()
-    print(f"Inference time: {end_time - start_time:.6f} ms")
+    print(f"Inference time: {(end_time - start_time) * 1000:.6f} ms")
     print(f"The prediction digit: {torch.argmax(outs)}")
 
     res_img = cv.resize(src, None, fx=10, fy=10)
