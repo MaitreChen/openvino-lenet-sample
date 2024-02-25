@@ -41,7 +41,7 @@ def inference_mnist(model_path, img_path, mode, device):
         infer_request.start_async()
         infer_request.wait()
         end_time = time()
-    print(f"Inference time: {end_time - start_time:.6f} ms")
+    print(f"Inference time: {(end_time - start_time) * 1000:.6f} ms")
 
     # 6. Get output and process
     output = infer_request.get_output_tensor()
