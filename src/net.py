@@ -76,8 +76,3 @@ if __name__ == "__main__":
     x = torch.rand((1, 1, 28, 28))
     print(net)
     print(net(x))
-
-    net = LeNet(cfg=[3, 8, 60, 42, 10])
-    x = torch.rand((1, 1, 28, 28))
-    print(net)
-    print(net(x))
