@@ -9,7 +9,7 @@ from src.net import Net
 def get_test_transform():
     from torchvision import transforms
     return transforms.Compose([transforms.ToTensor(),
-                               transforms.Resize((32, 32))
+                               transforms.Resize((28, 28))
                                ])
 
 
@@ -37,7 +37,8 @@ def inference_mnist(model_path, img_path, device):
 
     res_img = cv.resize(src, None, fx=10, fy=10)
     rgb_img = cv.cvtColor(res_img, cv.COLOR_GRAY2BGR)
-    cv.putText(rgb_img, "Prediction:" + str(torch.argmax(outs).item()), (0, 20), cv.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+    cv.putText(rgb_img, "Prediction:" + str(torch.argmax(outs).item()), (0, 20), cv.FONT_HERSHEY_SIMPLEX, 0.6,
+               (0, 0, 255), 2)
     cv.imshow("Result", rgb_img)
     cv.waitKey()
     cv.destroyAllWindows()
@@ -46,7 +47,7 @@ def inference_mnist(model_path, img_path, device):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model', type=str, required=True, help="ckpt、pth、pt、pkl")
-    parser.add_argument('-i', '--img', type=str, required=True,help="test image")
+    parser.add_argument('-i', '--img', type=str, required=True, help="test image")
     parser.add_argument('-d', '--device', type=str, required=True, help="cpu or cuda")
     args = parser.parse_args()
 

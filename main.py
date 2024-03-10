@@ -11,7 +11,7 @@ from utils.dataloader import get_dataset_loader
 from src.net import LeNet
 
 
-def trainer(net, batch_size, num_epoch, learning_rate, optim, mode):
+def train(net, batch_size, num_epoch, learning_rate, optim, mode):
     device = 'cuda' if args.use_gpu else 'cpu'
     net.to(device)
     print(f"Training on device: {device}")
@@ -102,48 +102,34 @@ def test(net, data_loader, device):
     return correct / total
 
 
-def plot_loss_acc(title='train'):
-    epoch_set = list(range(1, len(train_acc_set) + 1))
-    plt.title(title)
-    plt.plot(epoch_set, train_acc_set, lw=1.5, c='r', label='train-acc')
-    plt.plot(epoch_set, train_loss_set, lw=1.5, c='g', label='train-loss')
-    plt.plot(epoch_set, test_acc_set, lw=1.5, c='b', label='test-acc')
-    plt.xlabel("Epoch")
-    plt.legend()
-    plt.show()
-
-
 def get_argparse():
     parser = argparse.ArgumentParser()
 
     # train options
     parser.add_argument('--batch-size', default=256, type=int, help='batch size for training')
-    parser.add_argument('--epoch', default=2, type=int, help='number of epochs for training')
+    parser.add_argument('--epoch', default=1, type=int, help='number of epochs for training')
     parser.add_argument('--optim-policy', type=str, default='sgd', help='optimizer for training. [sgd | adam]')
     parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
     parser.add_argument('--use-gpu', action='store_true', default=True, help='turn on flag to use GPU')
 
     # prune options
-    parser.add_argument('--prune', action='store_true', default=False, help='turn on flag to prune')
+    parser.add_argument('--prune', action='store_true', default=True, help='turn on flag to prune')
     parser.add_argument('--output-dir', type=str, default='model_data', help='checkpoints of pruned model')
     parser.add_argument('--ratio', type=float, default=0.5, help='pruning scale. (default: 0.5)')
-    parser.add_argument('--retrain-mode', type=int, default=1, help='[train from scratch:0 | fine-tune:1]')
+    parser.add_argument('--retrain-mode', type=int, default=0, help='[train from scratch:0 | fine-tune:1]')
     parser.add_argument('--p-epoch', default=2, type=int, help='number of epochs for retraining')
     parser.add_argument('--p-lr', default=0.01, type=float, help='learning rate for retraining')
-
-    # plot options
-    parser.add_argument('--visualize', type=bool, default=False, help='select to visualize')
 
     return parser
 
 
 if __name__ == "__main__":
+    # Get arguments
+    args = get_argparse().parse_args()
+
     # Create dir for saving model
     if not os.path.isdir('model_data/'):
         os.makedirs('model_data/')
-
-    # Get arguments
-    args = get_argparse().parse_args()
 
     # Load dataset
     train_loader, test_loader = get_dataset_loader(batch_size=args.batch_size)
@@ -152,17 +138,13 @@ if __name__ == "__main__":
     net = LeNet()
 
     # Start training
-    train_acc_set, train_loss_set, test_acc_set = trainer(net, args.batch_size, args.epoch, args.lr, args.optim_policy,
-                                                          'train')
-    # plot
-    if args.visualize:
-        plot_loss_acc('train')
+    train_acc_set, train_loss_set, test_acc_set = train(net, args.batch_size, args.epoch, args.lr, args.optim_policy,
+                                                        'train')
 
     # prune and retrain to restore accuracy
     if args.prune:
-        from prune.pruner import pruner
+        from pruner.channel_pruning import pruner
 
-        net = LeNet()
         net.load_state_dict(torch.load('model_data/best.ckpt'))
         pruned_model = pruner(net, args.output_dir, args.ratio)
 
@@ -171,9 +153,5 @@ if __name__ == "__main__":
             pruned_model.load_state_dict(pruned_state_dict)
 
         # retrain
-        train_acc_set, train_loss_set, test_acc_set = trainer(net, args.batch_size, args.p_epoch, args.p_lr,
-                                                              args.optim_policy, 'retrain')
-
-        # plot
-        if args.visualize:
-            plot_loss_acc('retrain')
+        train_acc_set, train_loss_set, test_acc_set = train(pruned_model, args.batch_size, args.p_epoch, args.p_lr,
+                                                            args.optim_policy, 'retrain')

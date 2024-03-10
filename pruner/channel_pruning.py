@@ -80,7 +80,7 @@ def pruner(model, output_dir, ratio=0.5):
 
     # Step2, build the new model
     new_model = LeNet(cfg=cfg)
-    print("new_model:\n", new_model)
+    print("pruned_model:\n", new_model)
 
     # Step3, speed up the model, remove the 0 part of mask
     layer_id_in_cfg = 0
@@ -135,7 +135,7 @@ def pruner(model, output_dir, ratio=0.5):
 
 def get_argparse():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ckpt-path', type=str, default='', help='checkpoints of model')
+    parser.add_argument('--ckpt-path', type=str, default='./model_data/best.ckpt', help='checkpoints of model')
     parser.add_argument('--output-dir', type=str, default='model_data', help='checkpoints of pruned model')
     parser.add_argument('--ratio', type=float, default=0.5, help='pruning scale. (default: 0.5)')
 
@@ -144,8 +144,8 @@ def get_argparse():
 
 if __name__ == '__main__':
     # Create dir for saving model
-    if not os.path.isdir('../model_data/'):
-        os.makedirs('../model_data/')
+    if not os.path.isdir('./model_data/'):
+        os.makedirs('./model_data/')
 
     args = get_argparse().parse_args()
 
@@ -155,6 +155,6 @@ if __name__ == '__main__':
         state_dict = torch.load(args.ckpt_path)
         old_model.load_state_dict(state_dict)
 
-    # prune
+    # pruner
     new_model = pruner(old_model, args.output_dir, args.ratio)
     print(new_model)
