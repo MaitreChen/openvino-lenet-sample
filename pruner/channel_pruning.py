@@ -60,8 +60,13 @@ def pruner(model, output_dir, ratio=0.5):
                 weight_copy = m.weight.data.abs().clone().cpu().numpy()
                 L1_norm = np.sum(weight_copy, axis=0)  # for input numbers, so axis is 0
                 arg_max = np.argsort(L1_norm)
-                nums_of_keep_channels = int((1 - ratio) * in_channels)
-                arg_max_rev = arg_max[::-1][:nums_of_keep_channels]
+
+                # The second conv layer always outputs feature maps of spatial size 5x5, so after pruning
+                # the flattened length must be (remaining channels) * (5 * 5).
+                expected_inputs = cfg[layer_id - 1] * 5 * 5
+                expected_inputs = min(expected_inputs, in_channels)
+
+                arg_max_rev = arg_max[::-1][:expected_inputs]
                 mask = torch.zeros(in_channels)
                 mask[arg_max_rev.tolist()] = 1
                 input_mask.append(mask)  # make input mask for this special fc
