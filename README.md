@@ -18,6 +18,7 @@
 
 🚩 **New Updates**
 
+- ✅ April 10, 2026. Add knowledge distillation (LeNet teacher -> MLP student).
 - ✅ April 14, 2023. Add pruning based l1-norm.
 
 
@@ -64,7 +65,7 @@ python main.py [OPTIONS]
 | `-h, --help`                  | show this help message and exit       |
 | `--batch-size BATCH_SIZE`     | batch size for training               |
 | `--epoch EPOCH`               | number of epochs for training         |
-| `--optim-policy OPTIM_POLICY` | optimizer for training. [sgd          |
+| `--optim-policy OPTIM_POLICY` | optimizer for training. [sgd \| adam] |
 | `--lr LR`                     | learning rate                         |
 | `--use-gpu`                   | turn on flag to use GPU               |
 | `--prune`                     | turn on flag to prune                 |
@@ -73,6 +74,15 @@ python main.py [OPTIONS]
 | `--retrain-mode RETRAIN_MODE` | [train from scratch:0 \| fine-tune:1] |
 | `--p-epoch P_EPOCH`           | number of epochs for retraining       |
 | `--p-lr P_LR`                 | learning rate for retraining          |
+| `--kd`                        | turn on knowledge distillation (KD)   |
+| `--teacher-ckpt TEACHER_CKPT` | teacher checkpoint path               |
+| `--kd-epoch KD_EPOCH`         | number of epochs for KD training      |
+| `--kd-lr KD_LR`               | learning rate for KD training         |
+| `--temp TEMP`                 | distillation temperature              |
+| `--alpha ALPHA`               | distillation alpha                    |
+| `--mlp`                       | train MLP without KD                  |
+| `--mlp-epoch MLP_EPOCH`       | number of epochs for MLP training     |
+| `--mlp-lr MLP_LR`             | learning rate for MLP training        |
 | `--visualize VISUALIZE`       | select to visualize                   |
 
 
@@ -155,10 +165,38 @@ net = LeNet(cfg=[3, 8, 60, 42, 10])
 ### 模型导出
 
 ```bash
-python export_onnx.py -m model_data/best.ckpt
+python onnx/export_onnx.py -m model_data/best.ckpt
 ```
 
 【注】剪枝模型导出ONNX格式同上~
+
+### 知识蒸馏
+
+训练得到 MLP 学生模型（默认 teacher 为 `model_data/best.ckpt`）：
+
+```bash
+python main.py --kd --kd-epoch 2 --kd-lr 0.01 --temp 5.0 --alpha 0.7
+```
+
+导出蒸馏后的 MLP ONNX：
+
+```bash
+python onnx/export_onnx.py -m model_data/best_kd_mlp.ckpt --arch mlp
+```
+
+### MLP 基线
+
+训练 MLP（不使用 KD）：
+
+```bash
+python main.py --mlp --mlp-epoch 10 --mlp-lr 0.01
+```
+
+导出 MLP ONNX：
+
+```bash
+python onnx/export_onnx.py -m model_data/best_mlp.ckpt --arch mlp
+```
 
 ### ONNX Runtime推理
 

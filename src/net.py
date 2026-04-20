@@ -1,9 +1,8 @@
 """
-This file contains two definitions of LeNet:
-1、the first Net is an common definition,
-2、the other LeNet is for the convenience of pruning after adjusting the number of channels,
-the cfg parameter, can be automatically adjusted
-
+This file contains model definitions used in this repo:
+1) Net: a classic LeNet-5 style CNN used by ONNX/OpenVINO export & inference scripts.
+2) LeNet: a cfg-driven CNN variant for channel-pruning (cfg can be adjusted automatically).
+3) MLP: a small fully-connected network used as KD student.
 """
 
 import torch.nn as nn
@@ -68,7 +67,21 @@ class LeNet(nn.Module):
         x = self.feature(x)
         x = x.view(x.size(0), -1)
         y = self.classifier(x)
-        return F.log_softmax(y, dim=1)
+        return y
+
+
+class MLP(nn.Module):
+    def __init__(self, hidden1=128, hidden2=64, num_classes=10):
+        super().__init__()
+        self.fc1 = nn.Linear(28 * 28, hidden1)
+        self.fc2 = nn.Linear(hidden1, hidden2)
+        self.fc3 = nn.Linear(hidden2, num_classes)
+
+    def forward(self, x):
+        x = torch.flatten(x, 1)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        return self.fc3(x)
 
 
 if __name__ == "__main__":
